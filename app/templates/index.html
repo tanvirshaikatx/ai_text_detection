@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Text Detector</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .logo {
+            width: 50px; /* Set the width of the logo */
+            height: auto; /* Maintain aspect ratio */
+            position: absolute;
+            top: 10px;
+            left: 30px;
+        }
+        .container {
+            text-align: center;
+            margin-top: 0px;
+        }
+        
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #f1f1f1;
+            text-align: center;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo">
+        <h1>AI Text Detector</h1>
+        <textarea id="text-input" placeholder="Enter your text here..." oninput="clearResult()"></textarea>
+        <button onclick="checkText()">Check</button>
+        <p id="result"></p>
+    </div>
+    
+    
+    
+    <script>
+        function clearResult() {
+            document.getElementById("result").innerText = ""; // Clear previous result
+        }
+
+        async function checkText() {
+            const textInput = document.getElementById("text-input");
+            const resultElement = document.getElementById("result");
+            
+            const text = textInput.value.trim();
+            if (!text) {
+                resultElement.innerText = "Please enter some text.";
+                return;
+            }
+
+            const response = await fetch("/predict", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text: text })
+            });
+
+            const result = await response.json();
+            resultElement.innerText = "Prediction: " + result.prediction;
+        }
+    </script>
+</body>
+<footer>
+    <p class="footer-left">Made by Tanvir</p>
+    <p class="footer-right">This AI model may make mistakes. Please verify important results.</p>
+</footer>
+</html>
